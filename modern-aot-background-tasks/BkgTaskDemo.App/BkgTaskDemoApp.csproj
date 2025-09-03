@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <Nullable>enable</Nullable>
+    <UseUwp>true</UseUwp>
+    <Platforms>x86;x64;arm64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PublishAot>true</PublishAot>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <EnableMsixTooling>true</EnableMsixTooling>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebugType>none</DebugType>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
+    <PackageCertificateKeyFile>App6_TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!--<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
+
+    <!-- Disable due to some issues with CsWinRT, <Reference Include="[path to the component.dll]" /> is required for now -->
+    <!--<CsWinRTIncludes>BkgTaskDemo.Task.RuntimeComponent;</CsWinRTIncludes>-->
+
+    <!-- Required for background tasks support -->
+    <CsWinRTMergeReferencedActivationFactories>true</CsWinRTMergeReferencedActivationFactories>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.0-prerelease.250720.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BkgTaskDemo.Task.RuntimeComponent\BkgTaskDemo.Task.RuntimeComponent.csproj" />
+    <Reference Include="..\BkgTaskDemo.Task.RuntimeComponent\bin\$(Platform)\$(Configuration)\$(TargetFramework)\BkgTaskDemo.Task.RuntimeComponent.dll" />
+    <!-- Register the .winmd in the APPX manifest (requires the new MSIX tooling) -->
+    <!-- Need to ensure the app entrypoint is used in the manifest (instead of the component entrypoint) -->
+    <WindowsMetadataReference Include="$(MSBuildThisFileDirectory)\..\BkgTaskDemo.Task.RuntimeComponent\bin\$(Platform)\$(Configuration)\$(TargetFramework)\BkgTaskDemo.Task.RuntimeComponent.winmd" Implementation="$(MSBuildProjectName).dll" />
+  </ItemGroup>
+</Project>
